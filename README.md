@@ -159,7 +159,7 @@ menu->addChild(resultItem);
 resultItem ->runAction(CCScaleTo::create(0.5, 1.0));
 ```
   3. Add *resultTapped* function
-```C
+```Cpp
 void HelloWorld::resultTapped() {
     char* zoneString = "rewardedVideo";
     UnityAdsShow(zoneString);
@@ -193,7 +193,7 @@ _extraLives = 0;
     _extraLives = 1;
 ```
   5. Modify *resultItem*'s' implementation, only appear if there isn't extra life.
-```C
+```Cpp
 if(_extraLives <= 0) {
     strcpy(message,"You Win");
     if ( endReason == KENDREASONLOSE)
