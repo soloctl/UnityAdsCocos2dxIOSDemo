@@ -47,76 +47,76 @@ Make sure the following dependancies are enabled in your project
 Add C bridging header file
   1. Right click on **Cocos2DxFirstIosSample->ios** folder, choose **New File**, then select **Header File**. Enter what ever file name you like, for example **C-Interface**
   2. Add basic UnityAds wrapper functions declaration in the c header file  
-```C
-int UnityAdsInit (void *parameter);
-int UnityAdsCanShow (void *parameter);
-int UnityAdsShow (void *parameter);
-```
+      ```C
+      int UnityAdsInit (void *parameter);
+      int UnityAdsCanShow (void *parameter);
+      int UnityAdsShow (void *parameter);
+      ```
 
 Implement Unity Ads wrapper functions in your **AppController**
-1. Add **`#import "MyObject-C-Interface.h"`** in the top of **AppController**
-2. Add below implementation in the bottom of **AppController**  
-```ObjC
-int UnityAdsInit (void *gameIdP)
-{
-    return 1;
-}
-int UnityAdsCanShow (void *zoneStringP)
-{
-    return 1;
-}
-int UnityAdsShow (void* zoneStringP)
-{
-    return 1;
-}
-```
+  1. Add **`#import "MyObject-C-Interface.h"`** in the top of **AppController**
+  2. Add below implementation in the bottom of **AppController**  
+      ```ObjC
+      int UnityAdsInit (void *gameIdP)
+      {
+          return 1;
+      }
+      int UnityAdsCanShow (void *zoneStringP)
+      {
+          return 1;
+      }
+      int UnityAdsShow (void* zoneStringP)
+      {
+          return 1;
+      }
+      ```
 
 ### Initialize Unity Ads
 
 Add UnityAds to your **AppController**
   1. Import UnityAds header file **`#import <UnityAds/UnityAds.h>`** in **AppController.h** file
-  2. Make your **AppController** conform to **UnityAdsDelegate** protocol
-```ObjC
-@interface AppController :
-            NSObject <UIAccelerometerDelegate,
-                      UIAlertViewDelegate,
-                      UITextFieldDelegate,
-                      UIApplicationDelegate,
-                      UnityAdsDelegate> {
-```
+  2. Make your **AppController** conform to **UnityAdsDelegate** protocol  
+      ```ObjC
+      @interface AppController :
+                  NSObject <UIAccelerometerDelegate,
+                            UIAlertViewDelegate,
+                            UITextFieldDelegate,
+                            UIApplicationDelegate,
+                            UnityAdsDelegate> {
+      ```
   3. Implement **UnityAdsDelegate**'s *@required* callback in **AppController**  
-```ObjC
-#pragma UnityAdsDelegate methods
-- (void)unityAdsVideoCompleted:(NSString*)rewardItemKey
-                       skipped:(BOOL)skipped
-{
-}
-```
-  4. Initialize *UnityAds* in **UnityAdsInit** function, we are passing in the gameId parameter from cpp class, so no need to worry what is it now    
-```ObjC
-  UIApplication* app = [UIApplication sharedApplication];
-  AppController* controller = (AppController*)[app delegate];
-  UIViewController* rootController = [controller.window rootViewController];
-  NSString* gameId = [NSString stringWithFormat:@"%s", gameIdP];
-  [[UnityAds sharedInstance] startWithGameId:gameId andViewController:rootController];
-```
-  5. Set **AppController** as UnityAds' delegate
-```ObjC
-[[UnityAds sharedInstance] setDelegate:controller];
-```
+      ```ObjC
+      #pragma UnityAdsDelegate methods
+      - (void)unityAdsVideoCompleted:(NSString*)rewardItemKey
+                             skipped:(BOOL)skipped
+      {
+      }
+      ```
+  4. Initialize *UnityAds* in **UnityAdsInit** function, we are passing in the gameId parameter from cpp class, so no need to worry what is it now  
+      ```ObjC
+        UIApplication* app = [UIApplication sharedApplication];
+        AppController* controller = (AppController*)[app delegate];
+        UIViewController* rootController = [controller.window rootViewController];
+        NSString* gameId = [NSString stringWithFormat:@"%s", gameIdP];
+        [[UnityAds sharedInstance] startWithGameId:gameId andViewController:rootController];
+      ```
+  5. Set **AppController** as UnityAds' delegate  
+      ```ObjC
+      [[UnityAds sharedInstance] setDelegate:controller];
+      ```
 
 ### Implement show an ad function
   1. Replace **return 1;** with below code snippet  
-```ObjC
-NSString* zoneId = [NSString stringWithFormat:@"%s", zoneStringP];
-[[UnityAds sharedInstance] setZone:zoneId];
-if ([[UnityAds sharedInstance] canShow]) {
-    [[UnityAds sharedInstance] show];
-    return 1;
-} else {
-    return 0;
-}
-```
+      ```ObjC
+      NSString* zoneId = [NSString stringWithFormat:@"%s", zoneStringP];
+      [[UnityAds sharedInstance] setZone:zoneId];
+      if ([[UnityAds sharedInstance] canShow]) {
+          [[UnityAds sharedInstance] show];
+          return 1;
+      } else {
+          return 0;
+      }
+      ```
 
 ## Use the c bridge in your Cocos2dx game
 
@@ -124,52 +124,52 @@ if ([[UnityAds sharedInstance] canShow]) {
   1. Open **HelloWorldScene.cpp** and add **#include "MyObject-C-Interface.h"`** in the top
 
 ### Implement wrapper functions
-  1. Open **AppDelegate.h** and in the *public:* area, add **virtual void rewardItemOne();**
-  2. Open **AppDelegate.cpp** and add below code in the bottom of this class
-```C
-void AppDelegate::rewardItemOne()
-{
-    CCScene *scene = CCDirector::sharedDirector()->getRunningScene();
-    HelloWorld* gameScene = dynamic_cast<HelloWorld*>(scene->getChildren()->objectAtIndex(0));
-    if(gameScene != NULL)
-    {
-        gameScene->rewardItemOne();
-    }
-}
-```
+  1. Open **AppDelegate.h** and in the *public:* area, add **virtual void rewardItemOne();**  
+  2. Open **AppDelegate.cpp** and add below code in the bottom of this class  
+      ```Cpp
+      void AppDelegate::rewardItemOne()
+      {
+          CCScene *scene = CCDirector::sharedDirector()->getRunningScene();
+          HelloWorld* gameScene = dynamic_cast<HelloWorld*>(scene->getChildren()->objectAtIndex(0));
+          if(gameScene != NULL)
+          {
+              gameScene->rewardItemOne();
+          }
+      }
+      ```
   3. Open **HelloWorldScene.h**, in the *pblic:* area, add **virtual void rewardItemOne();**
-  4. Open **HelloWorldScene.cpp**, in the bottom in this class, add below implementation
-```C
-void HelloWorld::rewardItemOne()
-{
-    CCLOG("[UnityAds cpp] rewarded");
-}
-```
+  4. Open **HelloWorldScene.cpp**, in the bottom in this class, add below implementation  
+      ```Cpp
+      void HelloWorld::rewardItemOne()
+      {
+          CCLOG("[UnityAds cpp] rewarded");
+      }
+      ```
 
 ### Change the result label to show ad button
-  1. Open **HelloWorldScene.cpp** and create a new *CCMenuItemLabel*
-```C
-CCMenuItemLabel *resultItem = CCMenuItemLabel::create(label, this, menu_selector(HelloWorld::resultTapped) );
-```
-  2. Replace original *CCLabel* to below
-```C
-resultItem->setScale(0.1);
-resultItem->setPosition(ccp(winSize.width/2 , winSize.height*0.6));
-menu->addChild(resultItem);
-resultItem ->runAction(CCScaleTo::create(0.5, 1.0));
-```
-  3. Add *resultTapped* function
-```Cpp
-void HelloWorld::resultTapped() {
-    char* zoneString = "rewardedVideo";
-    UnityAdsShow(zoneString);
-}
-```
-  4. Before calling *UnityAdsShow*, we must make sure the ad is initialized, in beginning, add below code
-```C
-char* gameIdString = "1003843";
-UnityAdsInit(gameIdString);
-```
+  1. Open **HelloWorldScene.cpp** and create a new *CCMenuItemLabel*  
+      ```Cpp
+      CCMenuItemLabel *resultItem = CCMenuItemLabel::create(label, this, menu_selector(HelloWorld::resultTapped) );
+      ```
+  2. Replace original *CCLabel* to below  
+      ```C
+      resultItem->setScale(0.1);
+      resultItem->setPosition(ccp(winSize.width/2 , winSize.height*0.6));
+      menu->addChild(resultItem);
+      resultItem ->runAction(CCScaleTo::create(0.5, 1.0));
+      ```
+  3. Add *resultTapped* function  
+      ```Cpp
+      void HelloWorld::resultTapped() {
+          char* zoneString = "rewardedVideo";
+          UnityAdsShow(zoneString);
+      }
+      ```
+  4. Before calling *UnityAdsShow*, we must make sure the ad is initialized, in beginning, add below code  
+      ```C
+      char* gameIdString = "1003843";
+      UnityAdsInit(gameIdString);
+      ```
 > NOTE: The game ID in the example project is **1003843**, you need to replace this number with your own game ID
 
 
@@ -180,45 +180,45 @@ The idea is we want to reward the player by giving additional life in the next p
 
   1. Add **int _extraLives = 0;** definition in **HelloWorldScene.cpp**
   2. Move *resultItem* declaration to the header file, in the *private:* area  
-```C
-CCMenuItemLabel *_resultItem;
-```
-  3. Add extra life to *_lives*
-```C
-_lives = 1+_extraLives;
-_extraLives = 0;
-```
-  4. Add up an extra life after the player watched a video in *HelloWorld::rewardItemOne* function
-```C
-    _extraLives = 1;
-```
-  5. Modify *resultItem*'s' implementation, only appear if there isn't extra life.
-```Cpp
-if(_extraLives <= 0) {
-    strcpy(message,"You Win");
-    if ( endReason == KENDREASONLOSE)
-        strcpy(message,"Watch video to get extra life");
-    CCLabelBMFont * label ;
-    label = CCLabelBMFont::create(message, "Arial.fnt");
-    _resultItem = CCMenuItemLabel::create(label, this, menu_selector(HelloWorld::resultTapped) );
-    _resultItem->setScale(0.1);
-    _resultItem->setPosition(ccp(winSize.width/2 , winSize.height*0.6));
-    menu->addChild(_resultItem);
-    _resultItem ->runAction(CCScaleTo::create(0.5, 1.0));
-}
-```
-  6. Add hide **_resultItem** logic in *rewardItemOne* function
-```C
-void HelloWorld::rewardItemOne()
-{
-    _extraLives = 1;
-    if(_resultItem != NULL) {
-        _resultItem->removeFromParentAndCleanup(true);
-        _resultItem = NULL;
-    }
-    CCLOG("[UnityAds cpp] rewarded");
-}
-```
+      ```C
+      CCMenuItemLabel *_resultItem;
+      ```
+  3. Add extra life to *_lives*  
+      ```C
+      _lives = 1+_extraLives;
+      _extraLives = 0;
+      ```
+  4. Add up an extra life after the player watched a video in *HelloWorld::rewardItemOne* function  
+      ```C
+          _extraLives = 1;
+      ```
+  5. Modify *resultItem*'s' implementation, only appear if there isn't extra life.  
+      ```Cpp
+      if(_extraLives <= 0) {
+          strcpy(message,"You Win");
+          if ( endReason == KENDREASONLOSE)
+              strcpy(message,"Watch video to get extra life");
+          CCLabelBMFont * label ;
+          label = CCLabelBMFont::create(message, "Arial.fnt");
+          _resultItem = CCMenuItemLabel::create(label, this, menu_selector(HelloWorld::resultTapped) );
+          _resultItem->setScale(0.1);
+          _resultItem->setPosition(ccp(winSize.width/2 , winSize.height*0.6));
+          menu->addChild(_resultItem);
+          _resultItem ->runAction(CCScaleTo::create(0.5, 1.0));
+      }
+      ```
+  6. Add hide **_resultItem** logic in *rewardItemOne* function  
+      ```Cpp
+      void HelloWorld::rewardItemOne()
+      {
+          _extraLives = 1;
+          if(_resultItem != NULL) {
+              _resultItem->removeFromParentAndCleanup(true);
+              _resultItem = NULL;
+          }
+          CCLOG("[UnityAds cpp] rewarded");
+      }
+      ```
 
 Finally, we finished a rewarded video. Player would enjoy more after watching a video for an extra life in the next play.
 
