@@ -128,7 +128,7 @@ static AppDelegate s_sharedApplication;
 }
 
 
-#pragma Unity Ads Test
+#pragma Unity Ads C Bridge Implementation
 int UnityAdsInit (void *gameIdP)
 {
     NSLog(@"[UnityAds] UnityAdsInit");
@@ -153,8 +153,6 @@ int UnityAdsCanShow (void *zoneStringP)
     } else {
         return 0;
     }
-
-    
     return 1;
 }
 
@@ -170,8 +168,6 @@ int UnityAdsShow (void* zoneStringP)
     } else {
         return 0;
     }
-
-    
     return 1;
 }
 
